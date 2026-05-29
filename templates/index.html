@@ -28,10 +28,31 @@
     </style>
 </head>
 <body>
-
+{% if not session.get('user_id') %}
+    <div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+        <h2>🎓 智慧宿舍志願系統 - 請先登入</h2>
+        <form action="/login" method="POST">
+            <p>學號：<input type="text" name="student_id" required style="width:100%; padding:8px;"></p>
+            <p>密碼：<input type="password" name="password" required style="width:100%; padding:8px;"></p>
+            <button type="submit" style="width:100%; padding:10px; background-color:#4CAF50; color:white; border:none; border-radius:4px; font-size:16px;">登入系統</button>
+        </form>
+    </div>
+{% else %}
+    <div style="padding: 20px;">
+        <div style="text-align: right;">
+            <span>👋 歡迎，<b>{{ session.get('user_name') }}</b> 同學 ({{ session.get('user_id') }})</span>
+            <a href="/logout" style="margin-left:15px; color:red;">登出</a>
+        </div>
+        
+        <hr>
+        
+        <h2>📝 填寫/修改您的宿舍交換志願</h2>
+        
+        </div>
+{% endif %}
     <div class="sidebar">
         <h2>🏢 宿舍交換系統</h2>
-        <a href="#form-section" class="active">✍️ 填寫多志願申請</a>
+        <a href="#form-section" class="active">✍️ 齋舍交換申請</a>
         <a href="#search-section">🔍 查詢配對結果</a>
     </div>
 

@@ -11,13 +11,29 @@ Base = declarative_base()
 # ==========================================
 # 表格一：User (使用者/學生帳號)
 # ==========================================
+from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import Column, Integer, String
+
 class User(Base):
     __tablename__ = 'users'
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    student_id = Column(String(20), unique=True, nullable=False)  # 學號
-    name = Column(String(50), nullable=False)                     # 姓名
-    gender = Column(String(10), nullable=False)                   # 性別：'F' (女), 'M' (男)
+    id = Column(Integer, primary_key=True)
+    student_id = Column(String(20), unique=True, nullable=False)
+    name = Column(String(50), nullable=False)
+    gender = Column(String(10))
+    # ... 你們原本有的其他欄位 ...
+
+    # 🎯 【從這裡開始複製貼上到你的 class User 裡面】
+    # 1. 新增密碼雜湊欄位
+    password_hash = Column(String(128), nullable=False) 
+    
+    # 2. 自動幫密碼加密的超能力
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+        
+    # 3. 自動檢查密碼對不對的超能力
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
     degree = Column(String(20), nullable=False)                   # 學制：'undergrad' (大學部), 'grad' (研究所)
     is_college_member = Column(Boolean, default=False)            # 是否為住宿書院成員
     line_id = Column(String(50), nullable=False)                  # LINE ID

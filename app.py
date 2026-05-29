@@ -2,6 +2,38 @@ from flask import Flask, render_template, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from init_db import User, CurrentDorm, WishList
+from flask import Flask, render_template, request, session, redirect, url_for
+from sqlalchemy.orm import sessionmaker
+# ... 其他原本的 import 項目 ...
+
+# 1. 必須先宣告 Flask 實例 (移到最上方)
+app = Flask(__name__)
+
+# 2. 接著才能設定金鑰 (secret_key)
+app.secret_key = 'super_secret_key_dorm_system_2026'
+
+@app.route('/login', methods=['POST'])
+def login():
+    student_id = request.form.get('student_id')
+    password = request.form.get('password')
+    
+    db_session = Session()
+    user = db_session.query(User).filter_by(student_id=student_id).first()
+    db_session.close()
+    
+    # 檢查有沒有這個人，且密碼對不對
+    if user and user.check_password(password):
+        # 登入成功！把學號塞進安全通行證 (session)
+        session['user_id'] = user.student_id
+        session['user_name'] = user.name
+        return redirect(url_for('index')) # 導回填寫志願首頁
+    else:
+        return "<meta charset='UTF-8'><h2>❌ 登入失敗</h2><p>學號或密碼錯誤！</p><br><a href='/'>返回</a>"
+
+@app.route('/logout')
+def logout():
+    session.clear() # 清除通行證，登出
+    return redirect(url_for('index'))
 
 app = Flask(__name__)
 
@@ -78,6 +110,13 @@ def run_two_way_match():
 def home():
     return render_template("index.html")
 @app.route("/submit", methods=["POST"])
+def submit_wishes():
+    # 【安全防護大鎖】檢查瀏覽器有沒有登入通行證
+    if 'user_id' not in session:
+        return "<meta charset='UTF-8'><h2>🔒 請先登入</h2><p>您必須先登入系統才能修改志願！</p>"
+    
+    # 確保目前操作的學號，就是登入本人的學號
+    current_student_id = session['user_id']
 def submit():
     student_id = request.form.get("student_id")
     name = request.form.get("name")
