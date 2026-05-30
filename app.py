@@ -8,8 +8,10 @@ from init_db import User, CurrentDorm, WishList
 # ==========================================
 app = Flask(__name__)
 app.secret_key = 'super_secret_key_dorm_system_2026'
-
-ENGINE_URL = "sqlite:///dorm_exchange.db"
+import os
+# 🎯 兩邊同步鎖死絕對路徑
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+ENGINE_URL = f"sqlite:///{os.path.join(BASE_DIR, 'dorm_exchange.db')}"
 engine = create_engine(ENGINE_URL)
 Session = sessionmaker(bind=engine)
 

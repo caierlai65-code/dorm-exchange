@@ -6,7 +6,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # ==========================================
 # 資料庫基礎連線設定
 # ==========================================
-ENGINE_URL = "sqlite:///dorm_exchange.db"
+import os
+# 🎯 自動動態撈出目前檔案所在的絕對路徑，絕對不會迷路！
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+ENGINE_URL = f"sqlite:///{os.path.join(BASE_DIR, 'dorm_exchange.db')}"
 engine = create_engine(ENGINE_URL, echo=True)
 Session = sessionmaker(bind=engine)
 
