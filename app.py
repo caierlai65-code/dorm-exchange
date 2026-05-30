@@ -398,4 +398,39 @@ def cancel_wish():
         db_session.close()
 
 if __name__ == "__main__":
+    # 🚨 ====== 【黑科技：啟動時強制雲端物理點火生表格】 ======
+    try:
+        from init_db import Base, engine, User
+        print("🔮 偵測到雲端啟動，正在強制初始化 SQL 表格與預設測試資料...")
+        
+        # 1. 強制在資料庫建立所有缺失的表格 (users, current_dorms, wish_lists)
+        Base.metadata.create_all(engine)
+        
+        # 2. 順便自動塞入我們需要的測試帳號，這樣你就連現場註冊都不用了！
+        from sqlalchemy.orm import sessionmaker
+        TestSession = sessionmaker(bind=engine)
+        ts = TestSession()
+        
+        # 檢查 11 號大苦主是否存在，沒有就自動建立
+        user_11 = ts.query(User).filter_by(student_id="113032011").first()
+        if not user_11:
+            u11 = User(student_id="113032011", name="理學院苦主A", gender="F", degree="undergrad", is_college_member=False, is_art_student=False, line_id="line_a", email="11@oz.nthu.edu.tw")
+            u11.set_password("123456")
+            ts.add(u11)
+            
+        # 檢查 12 號本地人是否存在，沒有就自動建立
+        user_12 = ts.query(User).filter_by(student_id="113032012").first()
+        if not user_12:
+            u12 = User(student_id="113032012", name="教育院本地B", gender="F", degree="undergrad", is_college_member=False, is_art_student=False, line_id="line_b", email="12@oz.nthu.edu.tw")
+            u12.set_password("123456")
+            ts.add(u12)
+            
+        ts.commit()
+        ts.close()
+        print("🎉 雲端資料庫地基與預設帳號 (113032011 / 113032012) 完美初始化成功！")
+    except Exception as db_err:
+        print(f"❌ 啟動初始化發生非致命錯誤（可能表格已存在）: {db_err}")
+    # =========================================================
+
+    # 保持 port=5001 與你們的設定完全相容
     app.run(debug=True, host="0.0.0.0", port=5001)
