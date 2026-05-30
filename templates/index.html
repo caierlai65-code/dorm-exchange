@@ -20,280 +20,387 @@
         button:hover { background-color: #27ae60; }
         .btn-search { background-color: #3498db; }
         .btn-search:hover { background-color: #2980b9; }
-        .wish-box { background-color: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 5px solid #3498db; margin-bottom: 20px; }
-        .wish-box.v2 { border-left-color: #f1c40f; }
-        .wish-box.v3 { border-left-color: #e67e22; }
-        .wish-title { font-weight: bold; margin-top: 0; color: #2c3e50; }
         hr { border: 0; height: 1px; background: #ddd; margin: 25px 0; }
     </style>
 </head>
 <body>
-{% if not session.get('user_id') %}
-    <div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
-        <h2>🎓 智慧宿舍志願系統 - 請先登入</h2>
-        <form action="/login" method="POST">
-            <p>學號：<input type="text" name="student_id" required style="width:100%; padding:8px;"></p>
-            <p>密碼：<input type="password" name="password" required style="width:100%; padding:8px;"></p>
-            <button type="submit" style="width:100%; padding:10px; background-color:#4CAF50; color:white; border:none; border-radius:4px; font-size:16px;">登入系統</button>
-        </form>
-    </div>
-{% else %}
-    <div style="padding: 20px;">
-        <div style="text-align: right;">
-            <span>👋 歡迎，<b>{{ session.get('user_name') }}</b> 同學 ({{ session.get('user_id') }})</span>
-            <a href="/logout" style="margin-left:15px; color:red;">登出</a>
-        </div>
-        
-        <hr>
-        
-        <h2>📝 填寫/修改您的宿舍交換志願</h2>
-        
-        </div>
-{% endif %}
-    <div class="sidebar">
-        <h2>🏢 宿舍交換系統</h2>
-        <a href="#form-section" class="active">✍️ 齋舍交換申請</a>
-        <a href="#search-section">🔍 查詢配對結果</a>
-    </div>
 
-    <div class="main-content">
+{% if not session.get('user_id') %}
+    <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100vw; background-color: #f4f6f9; font-family: sans-serif;">
         
-        <div id="form-section" class="card">
-            <h2>🏢 填寫個人志願與申請</h2>
-            <p style="color: #666;">所有宿舍與房型已連動，請直接選擇，無須手動輸入。</p>
-            
-            <form action="/submit" method="POST">
-                <div class="form-group"><label>學號：</label><input type="text" name="student_id" placeholder="例如：B11000001" required></div>
-                <div class="form-group"><label>姓名：</label><input type="text" name="name" required></div>
-                <div class="form-group">
-                    <label>性別：</label>
-                    <select name="gender" required>
+        <div id="loginCard" style="width: 100%; max-width: 400px; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">🎓 智慧宿舍系統 - 登入</h2>
+            <form action="/login" method="POST">
+                <p>學號：<input type="text" name="student_id" placeholder="例如：113032005" required style="width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;"></p>
+                <p>密碼：<input type="password" name="password" placeholder="請輸入密碼" required style="width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;"></p>
+                <button type="submit" style="width:100%; padding:12px; background-color:#4CAF50; color:white; border:none; border-radius:6px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px;">登入系統</button>
+            </form>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
+                還沒有帳號？ <a href="#" onclick="toggleCard()" style="color: #2196F3; text-decoration: none; font-weight: bold;">立即註冊</a>
+            </p>
+        </div>
+
+        <div id="registerCard" style="width: 100%; max-width: 420px; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none;">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">📝 新使用者註冊</h2>
+            <form action="/register" method="POST">
+                <p>學號：<input type="text" name="student_id" placeholder="例如：113032005" required style="width:100%; padding:8px; margin-top:3px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;"></p>
+                <p>姓名：<input type="text" name="name" placeholder="請輸入真實姓名" required style="width:100%; padding:8px; margin-top:3px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;"></p>
+                
+                <p>性別：
+                    <select name="gender" required style="width:100%; padding:8px; margin-top:3px; border:1px solid #ccc; border-radius:6px;">
                         <option value="M">男 (M)</option>
                         <option value="F">女 (F)</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label>學制：</label>
-                    <select name="degree" required>
+                </p>
+                
+                <p>學制：
+                    <select name="degree" required style="width:100%; padding:8px; margin-top:3px; border:1px solid #ccc; border-radius:6px;">
                         <option value="undergrad">大學部</option>
                         <option value="grad">研究所</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label>是否為住宿書院成員：</label>
-                    <select name="is_college" required>
+                </p>
+
+                <p>是否為住宿書院成員：
+                    <select name="is_college" required style="width:100%; padding:8px; margin-top:3px; border:1px solid #ccc; border-radius:6px;">
                         <option value="False">否</option>
-                        <option value="True">是 (可選仁/實齋)</option>
+                        <option value="True">是</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label>是否為藝術學院學生：</label>
-                    <select name="is_art_student" required>
-                        <option value="False">否</option>
-                        <option value="True">是 (限選南大校區宿舍)</option>
-                    </select>
-                </div>
-                
-                <hr>
-                <h3>📍 目前擁有的床位</h3>
-                <div class="form-row">
-                    <div>
-                        <label>校區別</label>
-                        <select class="campus-select" onchange="updateDorms(this, 'current_dorm', 'current_type')" required>
-                            <option value="">請選擇校區</option>
-                            <option value="main">校本部</option>
-                            <option value="nanda">南大校區</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>目前齋別</label>
-                        <select id="current_dorm" name="current_dorm" onchange="updateRoomTypes('current_dorm', 'current_type')" required>
-                            <option value="">請先選擇校區</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>目前房型</label>
-                        <select id="current_type" name="current_type" required>
-                            <option value="">請先選擇齋別</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <hr>
-                <h3>🔮 期望交換的志願序 (最多可填三組)</h3>
-                
-                <div class="wish-box">
-                    <p class="wish-title">🌟 第一志願（最想去的宿舍）</p>
-                    <div class="form-row">
-                        <div>
-                            <label>校區別</label>
-                            <select class="campus-select" onchange="updateDorms(this, 'pref_dorm_1', 'pref_type_1')" required>
-                                <option value="">請選擇校區</option>
-                                <option value="main">校本部</option>
-                                <option value="nanda">南大校區</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>期望齋別</label>
-                            <select id="pref_dorm_1" name="pref_dorm_1" onchange="updateRoomTypes('pref_dorm_1', 'pref_type_1')" required>
-                                <option value="">請先選擇校區</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>期望房型</label>
-                            <select id="pref_type_1" name="pref_type_1" required>
-                                <option value="">請先選擇齋別</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                </p>
 
-                <div class="wish-box v2">
-                    <p class="wish-title">✨ 第二志願（次要選擇，若沒有可留空）</p>
-                    <div class="form-row">
-                        <div>
-                            <label>校區別</label>
-                            <select class="campus-select" onchange="updateDorms(this, 'pref_dorm_2', 'pref_type_2')">
-                                <option value="">請選擇校區</option>
-                                <option value="main">校本部</option>
-                                <option value="nanda">南大校區</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>期望齋別</label>
-                            <select id="pref_dorm_2" name="pref_dorm_2" onchange="updateRoomTypes('pref_dorm_2', 'pref_type_2')">
-                                <option value="">請先選擇校區</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>期望房型</label>
-                            <select id="pref_type_2" name="pref_type_2">
-                                <option value="">請先選擇齋別</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="wish-box v3">
-                    <p class="wish-title">🍃 第三志願（退而求其次，若沒有可留空）</p>
-                    <div class="form-row">
-                        <div>
-                            <label>校區別</label>
-                            <select class="campus-select" onchange="updateDorms(this, 'pref_dorm_3', 'pref_type_3')">
-                                <option value="">請選擇校區</option>
-                                <option value="main">校本部</option>
-                                <option value="nanda">南大校區</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>期望齋別</label>
-                            <select id="pref_dorm_3" name="pref_dorm_3" onchange="updateRoomTypes('pref_dorm_3', 'pref_type_3')">
-                                <option value="">請先選擇校區</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>期望房型</label>
-                            <select id="pref_type_3" name="pref_type_3">
-                                <option value="">請先選擇齋別</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group"><label>LINE ID (聯絡用)：</label><input type="text" name="line_id" required></div>
-                <button type="submit">送出申請並重新計算最佳推薦</button>
+                <p>LINE ID：<input type="text" name="line_id" placeholder="媒合成功聯絡用" required style="width:100%; padding:8px; margin-top:3px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;"></p>
+                <p>設定密碼：<input type="password" name="password" placeholder="請自訂登入密碼" required style="width:100%; padding:8px; margin-top:3px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;"></p>
+                
+                <button type="submit" style="width:100%; padding:12px; background-color:#2196F3; color:white; border:none; border-radius:6px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:15px;">提交註冊</button>
             </form>
-        </div>
-
-        <div id="search-section" class="card">
-            <h2>🔍 查詢我的配對與推薦清單</h2>
-            <p style="color: #666;">輸入學號，查看目前最適合你的交換對象排序清單。</p>
-            <form action="/check_result" method="POST">
-                <div class="form-group">
-                    <label>請輸入您的學號：</label>
-                    <input type="text" name="search_student_id" placeholder="例如：B11000001" required>
-                </div>
-                <button type="submit" class="btn-search">立即查詢狀態</button>
-            </form>
+            <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #666;">
+                已經有帳號了？ <a href="#" onclick="toggleCard()" style="color: #4CAF50; text-decoration: none; font-weight: bold;">返回登入</a>
+            </p>
         </div>
     </div>
 
     <script>
-        // 1. 完全對應你們表格與本部規則的完整新宿舍資料庫
-        const dormDatabase = {
-            "main": {
-                "✨ 校本部女宿區": ["靜齋", "慧齋", "雅齋", "文齋"],
-                "🔥 校本部男宿區": ["義齋", "禮齋", "智齋", "誠齋", "明齋"],
-                "🏫 住宿書院(混合)": ["仁齋", "實齋"],
-                "🧪 研究所/大學部(混合)": ["新齋", "學齋", "儒齋"]
-            },
-            "nanda": {
-                "🚺 南大女宿": ["鳴風樓", "迎曦軒", "擁月齋"],
-                "🚹 南大男宿": ["樹德樓"],
-                "🚻 南大男女混合/研究所": ["樂善樓"]
+        function toggleCard() {
+            var loginCard = document.getElementById('loginCard');
+            var registerCard = document.getElementById('registerCard');
+            if (loginCard.style.display === 'none') {
+                loginCard.style.display = 'block';
+                registerCard.style.display = 'none';
+            } else {
+                loginCard.style.display = 'none';
+                registerCard.style.display = 'block';
             }
-        };
-
-        const roomTypeDatabase = {
-            // 校本部房型對應
-            "靜齋": ["單人房", "雙人房"], "慧齋": ["雙人房"], "雅齋": ["單人房", "雙人房"], "文齋": ["雙人房"],
-            "義齋": ["雙人房"], "禮齋": ["雙人房"], "智齋": ["雙人房"], "誠齋": ["雙人房"], "明齋": ["雙人房"],
-            "仁齋": ["單人房", "雙人房"], "實齋": ["雙人房"], "新齋": ["雙人房", "三人房", "四人房"], 
-            "學齋": ["單人房", "雙人房"], "儒齋": ["單人房", "雙人房"],
-            
-            // 南大校區房型對應 (嚴格根據你們傳的表格資料)
-            "鳴風樓": ["六人房", "四人房"],
-            "樂善樓": ["四人房", "雙人房", "雙人套房"],
-            "迎曦軒": ["六人房", "三人房", "五人房", "四人房"],
-            "擁月齋": ["四人房", "三人套房", "雙人套房"],
-            "樹德樓": ["四人房", "雙人房"]
-        };
-
-        // 當使用者切換「校區別」時，自動更新該組的「齋別」選單
-        function updateDorms(campusSelect, dormSelectId, roomTypeSelectId) {
-            const campus = campusSelect.value;
-            const dormSelect = document.getElementById(dormSelectId);
-            const roomTypeSelect = document.getElementById(roomTypeSelectId);
-            
-            // 清空舊選項
-            dormSelect.innerHTML = '<option value="">-- 請選擇齋別 --</option>';
-            roomTypeSelect.innerHTML = '<option value="">-- 請先選擇齋別 --</option>';
-            
-            if (!campus) return;
-
-            const groups = dormDatabase[campus];
-            for (let groupName in groups) {
-                // 建立下拉選單中的「分類小標題」(optgroup)
-                const optgroup = document.createElement("optgroup");
-                optgroup.label = groupName;
-                
-                groups[groupName].forEach(dorm => {
-                    const option = document.createElement("option");
-                    option.value = dorm;
-                    option.textContent = dorm;
-                    optgroup.appendChild(option);
-                });
-                dormSelect.appendChild(optgroup);
-            }
-        }
-
-        // 當使用者切換「齋別」時，自動更新該組的「房型」選單
-        function updateRoomTypes(dormSelectId, roomTypeSelectId) {
-            const dormSelect = document.getElementById(dormSelectId);
-            const roomTypeSelect = document.getElementById(roomTypeSelectId);
-            const selectedDorm = dormSelect.value;
-            
-            roomTypeSelect.innerHTML = '<option value="">-- 請選擇房型 --</option>';
-            
-            if (!selectedDorm || !roomTypeDatabase[selectedDorm]) return;
-
-            roomTypeDatabase[selectedDorm].forEach(type => {
-                const option = document.createElement("option");
-                option.value = type;
-                option.textContent = type;
-                roomTypeSelect.appendChild(option);
-            });
         }
     </script>
+
+{% else %}
+    <div class="sidebar">
+        <h2>🏢 宿舍交換系統</h2>
+        <a href="#form-section" class="active">✍️ 齋舍交換申請</a>
+        <a href="#security-section">🔍 查詢配對結果</a> </div>
+
+    <div class="main-content">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-family: sans-serif;">
+            <span style="font-size: 16px; color: #2c3e50;">👋 歡迎回來，清華成員 <b>{{ session.get('user_name') }}</b> 同學 ！</span>
+            <a href="/logout" style="color: #dc3545; font-weight: bold; text-decoration: none; border: 1px solid #dc3545; padding: 6px 14px; border-radius: 6px; transition: 0.3s;" onmouseover="this.style.background='#dc3545'; this.style.color='white'" onmouseout="this.style.background='none'; this.style.color='#dc3545'">
+                登出系統
+            </a>
+        </div>
+
+        {% if user_wish %}
+            
+            {% if user_wish.status == 'proposed' %}
+            <div class="card" style="border-left: 6px solid #e67e22; background: #fffdf9; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
+                <h2 style="color: #e67e22; margin-top: 0;">🔮 智慧雙盲媒合：系統已為您指派對象！</h2>
+                <p style="font-size: 15px; color: #555;">為了徹底<b>杜絕私下買賣對價行為</b>，本平台全程實施<b>「個資雙盲加密」</b>。您無法得知對方的學號與姓名，僅能針對宿舍條件進行選擇：</p>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px dashed #ccc;">
+                    <p style="font-size: 16px; margin: 5px 0;">🎁 <b>對方願意與您交換的床位：</b></p>
+                    <h3 style="color: #27ae60; margin: 10px 0 5px 0; font-size: 20px;">
+                        🏠 {{ matched_dorm_info }}
+                    </h3>
+                    <p style="font-size: 13px; color: #888; margin: 0;">（此對象由系統依「跨校區急迫性權重」計算，為目前全池中契合度最高之選擇）</p>
+                </div>
+
+                <p style="font-weight: bold; color: #c0392b;">⚠️ 注意：一旦您點擊同意，且對方也點擊同意，兩校區床位將直接由學校後端強制對調，無法反悔。</p>
+                
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <form action="/respond_match" method="POST" style="flex: 1;">
+                        <input type="hidden" name="wish_id" value="{{ user_wish.id }}">
+                        <input type="hidden" name="choice" value="approve">
+                        <button type="submit" style="width: 100%; padding: 14px; background: #2ecc71; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                            👍 我同意交換此床位
+                        </button>
+                    </form>
+                    
+                    <form action="/respond_match" method="POST" style="flex: 1;">
+                        <input type="hidden" name="wish_id" value="{{ user_wish.id }}">
+                        <input type="hidden" name="choice" value="reject">
+                        <button type="submit" style="width: 100%; padding: 14px; background: #95a5a6; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                            ❌ 拒絕，回盲盒池重新媒合
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {% elif user_wish.status == 'approved' or user_wish.status == 'my_approved' %}
+            <div class="card" style="border-left: 6px solid #2ecc71; text-align: center; padding: 40px 20px; background: white; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
+                {% if user_wish.status == 'my_approved' %}
+                    <h1 style="color: #e67e22; font-size: 48px; margin: 0;">⏳</h1>
+                    <h2 style="color: #2c3e50; margin-top: 10px;">您已同意交換，正等待對方確認</h2>
+                    <p style="font-size: 15px; color: #666;">您已點擊同意此筆雙盲交換！請靜候對方同學於他個人的後台按下確認。一旦雙方皆點擊同意，系統便會立刻為兩位對調床位權限。</p>
+                {% else %}
+                    <h1 style="color: #2ecc71; font-size: 48px; margin: 0;">🎉</h1>
+                    <h2 style="color: #2c3e50; margin-top: 10px;">恭喜！兩校區宿舍雙盲交換成功！</h2>
+                    <p style="font-size: 16px; color: #666; max-width: 500px; margin: 10px auto;">
+                        系統已於資料庫正式強制對調您與對方的床位所有權。由於全程採雙盲機制，為保護雙方隱私，無需私下聯絡。
+                    </p>
+                    <div style="background: #e8f8f5; padding: 15px; border-radius: 6px; display: inline-block; margin: 15px 0; border: 1px solid #2ecc71;">
+                        <b>您的新床位：</b> <span style="color:#27ae60; font-size: 18px;">{{ new_dorm_info }}</span>
+                    </div>
+                    <p style="font-size: 14px; color: #999;">系統已自動將「更換公文異動單」送至學務處住宿組，請於下週持學生證辦理進住。</p>
+                {% endif %}
+            </div>
+
+            {% elif user_wish.status == 'matching' %}
+            <div class="card" style="border-left: 6px solid #3498db; background: #f4f9fd; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
+                <h3 style="color: #2980b9; margin-top:0;">🔮 中央盲盒池媒合中...</h3>
+                <p>您已成功將目前的床位託管至清華中央交換池。</p>
+                <ul style="line-height: 1.8;">
+                    <li><b>您的期望志願：</b> {{ user_wish.preferred_dorm }} ({{ user_wish.preferred_room_type }})</li>
+                    <li><b>投入權重點數：</b> <span style="color: #e67e22; font-weight: bold; font-size: 18px;">{{ user_wish.allocated_points }} 點</span></li>
+                    <li><b>系統計算出的綜合急迫分：</b> <span style="color: #2c3e50; font-weight: bold;">{{ user_wish.weight_score }} 分</span></li>
+                </ul>
+                <p style="font-size: 13px; color: #7f8c8d;">💡 提示：系統排程隨時在背景進行對碰。一旦有符合您志願、且權重分數相近的同學出現，這裡會立刻跳出隱私雙盲確認小卡！</p>
+               
+                <div style="margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 15px;">
+                    <form action="/cancel_wish" method="POST" onsubmit="return confirm('確定要撤銷此筆宿舍交換申請，並退出中央配對池嗎？');">
+                        <input type="hidden" name="wish_id" value="{{ user_wish.id }}">
+                        <button type="submit" style="width: auto; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: normal;">
+                            ↩️ 撤銷申請並退出交換池
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+        {% endif %}
+
+        {% if not user_wish %}
+        <div id="form-section" class="card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: sans-serif;">
+            <h2>🏢 填寫個人志願並加入中央交換池</h2>
+            <p style="color: #666;">系統將依據您的性別、身分、書院資格，<b>即時連動並限制</b>您可以選擇的宿舍選項，防呆且完全符合學校異動規範。</p>
+            
+            <form action="/submit" method="POST">
+                <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin: 15px 0; border: 1px solid #ffeeba;">
+                    <label style="color: #856404; font-weight: bold;">🎯 分配權重點數 (預設發放 100 點)：</label>
+                    <input type="number" name="allocated_points" min="0" max="100" value="50" style="width: 80px; padding: 6px; margin-left: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                    <span style="font-size: 12px; color: #666; margin-left: 10px;">（點數投越多，後端權重排名越前面！）</span>
+                </div>
+
+                <div class="form-group" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <label style="color: #2c3e50; margin-bottom: 10px;">👤 請確認您的媒合基本身分：</label>
+                    <div style="display: flex; gap: 10px;">
+                        <div>
+                            <label style="font-size:13px; color:#666;">性別</label>
+                            <select id="user_gender" name="gender" onchange="updateDormOptions()" required>
+                                <option value="M">男 (M)</option>
+                                <option value="F" selected>女 (F)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:13px; color:#666;">學制</label>
+                            <select id="user_degree" name="degree" onchange="updateDormOptions()" required>
+                                <option value="undergrad">大學部</option>
+                                <option value="grad">研究所</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:13px; color:#666;">住宿書院</label>
+                            <select id="is_college" name="is_college" onchange="updateDormOptions()" required>
+                                <option value="False">一般學生 (非書院)</option>
+                                <option value="True">住宿書院成員</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:13px; color:#666;">藝術學院</label>
+                            <select id="is_art_student" name="is_art_student" onchange="updateDormOptions()" required>
+                                <option value="False">普通學院 (本部/南大)</option>
+                                <option value="True">藝術學院學生(南大專屬)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="student_id" value="{{ session.get('user_id') }}">
+                <input type="hidden" name="name" value="{{ session.get('user_name') }}">
+                <input type="hidden" name="line_id" value="automatch">
+
+                <div class="form-group">
+                    <label>📍 您目前持有的床位：</label>
+                    <div class="form-row">
+                        <div>
+                            <select name="current_dorm" required style="width: 100%;">
+                                </select>
+                        </div>
+                        <div>
+                            <select name="current_type" required>
+                                </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>🔮 您【第一志願】期望交換的目標：</label>
+                    <div class="form-row">
+                        <div>
+                            <select name="pref_dorm_1" required style="width: 100%;">
+                                </select>
+                        </div>
+                        <div>
+                            <select name="pref_type_1" required>
+                                </select>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="pref_dorm_2" value="">
+                <input type="hidden" name="pref_type_2" value="">
+                <input type="hidden" name="pref_dorm_3" value="">
+                <input type="hidden" name="pref_type_3" value="">
+                
+                <button type="submit" class="button" style="margin-top: 15px;">提交並鎖定進入盲盒池</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div id="security-section" class="card" style="border-left: 6px solid #34495e; background: #fdfefe; padding: 30px; border-radius: 8px; font-family: sans-serif; margin-top: 20px;">
+            <h3 style="color: #2c3e50; margin-top: 0; display: flex; align-items: center; gap: 8px;">
+                🛡️ 中央智慧雙盲媒合安全機制宣告
+            </h3>
+            <p style="font-size: 15px; line-height: 1.6; color: #555;">
+                本交換平台為徹底<b>防範校園床位黑市交易、私下不當對價買賣、以及防截胡行為</b>，自本版本起已<b>全面廢除「人工主動交叉查詢名單」之舊制</b>。
+            </p>
+            <div style="background: #f4f6f7; padding: 15px; border-radius: 6px; font-size: 14px; color: #444; line-height: 1.8;">
+                📌 <b>為什麼我不能主動看別人名單？</b><br>
+                1. <b>個資全程雙盲加密</b>：全校託管之床位皆隱蔽於後端，由「中央對碰加權演算法」自動依學校資格輪詢。<br>
+                2. <b>自動主動指派</b>：一旦演算法成功幫您搓合床位互補的同學，<b>首頁將自動跳出確認卡片</b>。<br>
+                3. <b>雙同意直接連動</b>：雙方均按下同意後，資料庫直接強制調換，無需、亦不允許私下聯絡與挑選。
+            </div>
+            <p style="font-size: 13px; color: #7f8c8d; margin-top: 15px; font-style: italic;">※ 智慧鎖定演算法於背景實時輪詢，符合資格與高權重急迫分者將優先指派通知。</p>
+        </div>
+
+    </div>
+{% endif %}
+
+<script>
+    // 1. 【全域宣告】定義全校老鳥交換池主資料庫（對照男女宿官方表格）
+    const allDorms = [
+        { value: "實齋", text: "實齋 (校本部 - 大學部男/女宿/書院專屬)", gender: "BOTH", isUndergrad: true, isGrad: false, college: true, art: false, rooms: ["四人房"] },
+        { value: "仁齋", text: "仁齋 (校本部 - 大學部男/女宿/書院專屬)", gender: "BOTH", isUndergrad: true, isGrad: false, college: true, art: false, rooms: ["四人房"] },
+        
+        { value: "明齋", text: "明齋 (校本部 - 研究所男宿)", gender: "M", isUndergrad: false, isGrad: true, college: false, art: false, rooms: ["單人房", "雙人房"] },
+        { value: "平齋", text: "平齋 (校本部 - 研究所男宿)", gender: "M", isUndergrad: false, isGrad: true, college: false, art: false, rooms: ["單人房", "雙人房"] },
+        { value: "華齋", text: "華齋 (校本部 - 大學部男宿)", gender: "M", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["四人房"] },
+        { value: "碩齋", text: "碩齋 (校本部 - 大學部男宿)", gender: "M", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["四人房"] },
+        { value: "誠齋", text: "誠齋 (校本部 - 大學部男宿)", gender: "M", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["四人房", "雙人房"] },
+        { value: "新齋", text: "新齋 (校本部 - 大學部男宿專區)", gender: "M", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["雙人房", "四人房", "雙人套房"] },
+        { value: "禮齋", text: "禮齋 (校本部 - 大學部男宿)", gender: "M", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["四人房", "雙人房"] },
+        { value: "義齋", text: "義齋 (校本部 - 大學部男宿)", gender: "M", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["四人房", "雙人房"] },
+        { value: "信齋C棟", text: "信齋C棟 (校本部 - 大學部男宿)", gender: "M", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["四人房"] },
+        { value: "清齋", text: "清齋 (校本部 - 男宿/不限學制)", gender: "M", isUndergrad: true, isGrad: true, college: false, art: false, rooms: ["單人房", "雙人房", "四人房"] },
+        
+        { value: "學齋", text: "學齋 (校本部 - 研究所女宿)", gender: "F", isUndergrad: false, isGrad: true, college: false, art: false, rooms: ["單人房", "雙人房"] },
+        { value: "儒齋", text: "儒齋 (校本部 - 女宿/不限學制)", gender: "F", isUndergrad: true, isGrad: true, college: false, art: false, rooms: ["單人房", "雙人房"] },
+        { value: "信齋A", text: "信齋A棟 (校本部 - 大學部女宿)", gender: "F", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["雙人房"] },
+        { value: "信齋B", text: "信齋B棟 (校本部 - 大學部女宿)", gender: "F", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["雙人房"] },
+        { value: "靜齋", text: "靜齋 (校本部 - 大學部女宿)", gender: "F", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["三人房", "四人房", "雙人房"] },
+        { value: "慧齋", text: "慧齋 (校本部 - 大學部女宿)", gender: "F", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["雙人房", "四人房"] },
+        { value: "雅齋", text: "雅齋 (校本部 - 大學部女宿)", gender: "F", isUndergrad: true, isGrad: false, college: false, art: false, rooms: ["三人房", "雙人房", "六人房", "八人房"] },
+        
+        { value: "樹德樓", text: "樹德樓 (南大校區 - 男宿)", gender: "M", isUndergrad: true, isGrad: true, college: false, art: "BOTH", rooms: ["雙人房", "四人房"] },
+        { value: "鳴風樓", text: "鳴風樓 (南大校區 - 女宿)", gender: "F", isUndergrad: true, isGrad: true, college: false, art: "BOTH", rooms: ["雙人房", "四人房"] },
+        { value: "樂善樓", text: "樂善樓 (南大校區 - 男女宿)", gender: "BOTH", isUndergrad: true, isGrad: true, college: false, art: "BOTH", rooms: ["雙人房", "四人房"] },
+        { value: "迎曦軒", text: "迎曦軒 (南大校區 - 女宿)", gender: "F", isUndergrad: true, isGrad: true, college: false, art: "BOTH", rooms: ["雙人房", "四人房"] },
+        { value: "擁月齋", text: "擁月齋 (南大校區 - 女宿)", gender: "F", isUndergrad: true, isGrad: true, college: false, art: "BOTH", rooms: ["雙人房", "四人房"] }
+    ];
+
+    // 2. 新增：依據選定的宿舍，精密更新並限制右側的房型 options 欄位
+    function updateRoomOptions(dormSelectElement) {
+        const selectedDormValue = dormSelectElement.value;
+        const roomSelectElement = dormSelectElement.closest('.form-row').querySelectorAll('select')[1];
+        if (!roomSelectElement) return;
+
+        const dormData = allDorms.find(d => d.value === selectedDormValue);
+        if (dormData && dormData.rooms) {
+            const savedRoomValue = roomSelectElement.value;
+            roomSelectElement.innerHTML = '';
+            
+            dormData.rooms.forEach(roomType => {
+                const opt = document.createElement('option');
+                opt.value = roomType;
+                opt.text = roomType;
+                roomSelectElement.appendChild(opt);
+            });
+            
+            if (savedRoomValue && roomSelectElement.querySelector(`option[value="${savedRoomValue}"]`)) {
+                roomSelectElement.value = savedRoomValue;
+            }
+        }
+    }
+
+    // 3. 依據身分，即時精準過濾宿舍選單
+    function updateDormOptions() {
+        const gender = document.getElementById('user_gender').value;
+        const degree = document.getElementById('user_degree').value;
+        const isUndergradUser = (degree === 'undergrad');
+        const isGradUser = (degree === 'grad');
+        const isCollege = document.getElementById('is_college').value === 'True';
+        const isArt = document.getElementById('is_art_student').value === 'True';
+
+        const filteredDorms = allDorms.filter(dorm => {
+            if (!isCollege && dorm.college) return false;
+            if (dorm.gender !== "BOTH" && dorm.gender !== gender) return false;
+            if (isUndergradUser && !dorm.isUndergrad) return false;
+            if (isGradUser && !dorm.isGrad) return false;
+            return true;
+        });
+
+        const dormSelects = document.querySelectorAll('select[name="current_dorm"], select[name="pref_dorm_1"]');
+        
+        dormSelects.forEach(select => {
+            const savedValue = select.value;
+            select.innerHTML = '';
+            
+            filteredDorms.forEach(dorm => {
+                // 藝術學院特殊防呆限制：只能持有與換南大宿
+                if (isArt && !dorm.art) return;
+                
+                const opt = document.createElement('option');
+                opt.value = dorm.value;
+                opt.text = dorm.text;
+                select.appendChild(opt);
+            });
+
+            if (savedValue && select.querySelector(`option[value="${savedValue}"]`)) {
+                select.value = savedValue;
+            }
+
+            // 綁定連動
+            select.onchange = function() {
+                updateRoomOptions(this);
+            };
+            
+            // 立即執行房型刷新
+            updateRoomOptions(select);
+        });
+    }
+
+    // 初始化網頁加載
+    document.addEventListener("DOMContentLoaded", function() {
+        updateDormOptions();
+    });
+</script>
+
 </body>
 </html>
